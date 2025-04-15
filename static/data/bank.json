@@ -1,0 +1,88 @@
+{
+  "type": "FeatureCollection",
+  "generator": "custom",
+  "copyright": "The data included in this document is from OpenStreetMap and other sources.",
+  "timestamp": "2025-04-01T00:00:00Z",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "node/001",
+      "properties": {
+        "@id": "node/001",
+        "amenity": "BANK",
+        "name": "VIETCOMBANK PHAN ĐĂNG LƯU"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.71862351534419,
+          10.800564429038563
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/002",
+      "properties": {
+        "@id": "node/002",
+        "amenity": "BANK",
+        "name": "VIETCOMBANK PHAN ĐĂNG LƯU"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6900124423279,
+          10.803835880002447
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/002",
+      "properties": {
+        "@id": "node/002",
+        "amenity": "BANK",
+        "name": "VIETCOMBANK NƠ TRANG LONG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.6996507576721,
+          10.81892705763452
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/002",
+      "properties": {
+        "@id": "node/002",
+        "amenity": "BANK",
+        "name": "VIETCOMBANK XÔ VIẾT NGHỆ TĨNH"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.71115297116394,
+          10.802741335413742
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "node/002",
+      "properties": {
+        "@id": "node/002",
+        "amenity": "BANK",
+        "name": "Vietcombank Vinhomes Central Park"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          106.72176983932522,
+          10.793878579535047
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% block title %}
+        Hiển thị nội dung tiêu đề
+        {% endblock %}
+    </title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="{% static 'js/script.js' %}"></script>
+    {% block map %}
+    {% endblock %}
+</head>
+<body>
+
+    {% include 'partials/header.html' %} 
+
+    <main>
+        {% block content %}
+        {% endblock %}
+        {% block script %}
+        {% endblock %}
+
+    </main>
+
+    {% include 'partials/footer.html' %}  
+
+</body>
+</html>

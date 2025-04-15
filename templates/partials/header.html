@@ -1,0 +1,137 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>Home - Poco Template</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon/boy.png' %}" />
+    
+    <!-- CSS here -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/fontawesome-all.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/slick.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/default.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/aos.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+</head>
+<header id="header" class="header-area">
+    <div class="container custom-container">
+        <nav class="menu-area d-flex align-items-center">
+            <div class="logo">
+                <a href="{% url 'homepage' %}">
+                    <img src="{% static 'img/logo/logo.png' %}" alt="logo" />
+                </a>
+            </div>
+            <ul class="main-menu d-flex align-items-center">
+                <li>
+                    <a class="active" href="/">Trang chủ</a>
+                </li>
+                <li>
+                    <a href="javascript:void(0)">Bản đồ</a>
+                    <ul class="sub-menu">
+                        <li><a href="{% url 'maps:VCB' %}">Dia Diem VCB</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="/gioi-thieu">Giới thiệu</a>
+                </li>
+            </ul>
+            
+                
+            <div class="right-content ml-auto">
+                <div class="search-bar">
+                    <img src="{% static 'img/logo/search.svg' %}" alt="search logo">
+                </div>
+                <div class="contact-number">
+                    <a class="primary__button primary__button-bgBlack" href="tel:+98745478547">
+                        <img src="{% static 'img/logo/phone-alt.svg' %}" alt="phone alt">
+                        +987 45478 547
+                    </a>
+                </div>
+            </div>
+            <div class="hamburger-menu"><span></span><span></span><span></span></div>
+        </nav>
+        <aside>
+            <div class="sidebar-menu">
+                <div class="close-sidebar"><span></span><span></span></div>
+                <div class="logo">
+                    <a href="index.html">
+                        <img src="static/img/logo/logo.png" alt="logo" />
+                    </a>
+                </div>
+                <form class="asidesearch-bar">
+                    <input type="text" name="search" />
+                    <img src="static/img/logo/search.svg" alt="search logo" />
+                </form>
+                <ul class="main-menu">
+                    <li>
+                        <a class="active" href="index.html">Home</a>
+                    </li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="about-us.html">About Us</a></li>
+                    <li><a href="project.html">Portfolio</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                </ul>
+                <a class="primary__button primary__button-bgBlack contacprimary__button" href="tel:+987 45478 547">
+                    <img src="static/img/logo/phone-alt.svg" alt="phone alt" />
+                    +987 45478 547
+                </a>
+            </div>
+            <div class="overlay"></div>
+        </aside>
+    </div>
+    <div class="search-box">
+        <div class="search-form">
+            <form action="#">
+                <input type="text" placeholder="Enter Your Kayword" />
+                <button type="submit">
+                    <img src="static/img/logo/search.svg" alt="search logo" />
+                </button>
+            </form>
+        </div>
+        <a class="search-close" href="javascript:void(0)"><i class="fas fa-times"></i></a>
+    </div>
+</header>
+<script src="{% static 'js/vendor/jquery-1.12.4.min.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/circle-progress.min.js' %}"></script>
+    <script src="{% static 'js/slick.min.js' %}"></script>
+    <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+    <script src="{% static 'js/jquery.counterup.min.js' %}"></script>
+    <script src="{% static 'js/slider.js' %}"></script>
+    <script src="{% static 'js/aos.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+
+    <script> 
+        /* magnificPopup video view */
+        $(document).ready(function() {
+            $('.popup-video').magnificPopup({
+                type: 'iframe',
+            });
+        });
+    </script>
+
+    <!-- Purchase Button -->
+    <div class="templatecookie-btn">
+        <a href="https://1.envato.market/e4QrVj" class="purchase-btn">
+            Purchase Now
+            <span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 
+                             0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+            </span>
+        </a>
+    </div>
+
+</body>
+</html>
