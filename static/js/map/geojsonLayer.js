@@ -8,7 +8,9 @@ let allBankData = []; // Thêm biến này
 
 export function loadGeoJSONLayers(map) {
     const layersContainer = document.querySelector('.layers');
-    if (!layersContainer) return;
+if (!layersContainer) return;
+// Đảm bảo .layers được thêm vào trong container của bản đồ
+document.querySelector('#map').appendChild(layersContainer);
 
     function generateButton(name) {
         const id = name === layersButton ? 'all-layers' : name;
