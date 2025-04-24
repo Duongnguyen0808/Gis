@@ -34,7 +34,7 @@ body {
 /* === LAYERS CONTROL === */
 .layers {
     position: absolute;
-    top: 80px; /* Di chuyển xuống dưới dấu - thêm một chút nữa */
+    top: 500px; /* Di chuyển xuống dưới dấu - thêm một chút nữa */
     right: 10px;
     display: flex;
     flex-direction: column;
@@ -200,14 +200,23 @@ input[type='checkbox']:checked {
     transition: all 0.3s ease-in-out;
 }
 
+
 /* Fullscreen sidebar style */
-#map:fullscreen #sidebar,
-#map:-webkit-full-screen #sidebar {
-    position: fixed; /* Giữ là fixed khi ở chế độ toàn màn hình */
-    top: 70px;
+#map:fullscreen #sidebar.open,
+#map:-webkit-full-screen #sidebar.open {
+    position: absolute; /* Định vị theo #map */
+    top: 10px;
     right: 10px;
-    max-height: calc(100vh - 80px);
-    z-index: 10001; /* Đảm bảo z-index cao hơn map ở chế độ toàn màn hình */
+    max-height: calc(100% - 20px);
+    width: 350px; /* Hoặc độ rộng mong muốn */
+    z-index: 10001;
+    display: block !important;
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e0e0e0;
+    overflow-y: auto;
 }
 
 #sidebar-content {

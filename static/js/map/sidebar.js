@@ -49,12 +49,17 @@ export function setupSidebar(map) {
     }
 
     map.on('fullscreenchange', () => {
+        // Kiểm tra lại trạng thái của sidebar sau khi sự kiện fullscreenchange xảy ra
         if (sidebar && sidebar.classList.contains('open')) {
-            map.once('click', hideSidebar);
+            // Đảm bảo sidebar vẫn hiển thị
+            // (Có thể không cần thiết nếu CSS đã xử lý tốt, nhưng để chắc chắn)
+            sidebar.style.display = 'block';
+
+            // Bỏ dòng này nếu bạn không muốn sidebar tự động ẩn khi nhấp vào bản đồ trong fullscreen
+            // map.once('click', hideSidebar);
         }
     });
 }
-
 export function showSidebar(properties, latlng, bankInfo) {
     if (!sidebar || !contentDiv) {
         console.error("Sidebar elements not found!");

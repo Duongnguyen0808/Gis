@@ -158,22 +158,19 @@
                             </select>
 
                             <button onclick="calculateInterest()">Tính Lãi</button>
-                            <div id="interest-panel-toggle">
-                                <i class="fas fa-percentage"></i>
-                            </div>
                             <div id="calculated-interest"></div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div id="sidebar" class="closed">
-                <div id="sidebar-content"></div>
-                <button id="close-sidebar" class="btn btn-secondary mt-2">Đóng</button>
-            </div>
-        </div>
-        <ul class="layers"></ul>
-    </div>
-{% endblock %}
+
+                <div id="sidebar" class="closed">
+                    <div id="sidebar-content">
+                        </div>
+                    <button id="close-sidebar" class="btn btn-secondary mt-2">Đóng</button>
+                </div>
+                </div> </div> <ul class="layers">
+             </ul>
+    </div> {% endblock %}
 
 {% block script %}
     <script
@@ -196,38 +193,77 @@
             const selectedTerm = termSelector.value;
             let interestRate = 0;
 
+            if (!principal || isNaN(principal)) {
+                calculatedInterestDiv.textContent = "Vui lòng nhập số tiền hợp lệ.";
+                return;
+            }
+            if (!interestRateTableBody) {
+                 calculatedInterestDiv.textContent = "Lỗi: Không tìm thấy bảng lãi suất.";
+                return;
+            }
+
+
             for (let i = 0; i < interestRateTableBody.rows.length; i++) {
                 const row = interestRateTableBody.rows[i];
-                const termInTable = row.cells[0].textContent;
-                if (termInTable === selectedTerm) {
-                    interestRate = parseFloat(row.cells[1].textContent) / 100; // Lấy lãi suất VND
-                    break;
-                }
+                 if (row.cells.length > 1) { // Kiểm tra có đủ ô không
+                    const termInTable = row.cells[0].textContent;
+                    if (termInTable === selectedTerm) {
+                        interestRate = parseFloat(row.cells[1].textContent) / 100; // Lấy lãi suất VND
+                        break;
+                    }
+                 }
             }
+
+             if (isNaN(interestRate)) {
+                 calculatedInterestDiv.textContent = "Không tìm thấy lãi suất cho kỳ hạn này.";
+                 return;
+             }
 
             let interest = 0;
-            if (selectedTerm.includes('ngày')) {
-                const days = parseInt(selectedTerm.split(' ')[0]);
-                interest = principal * interestRate * (days / 365);
-            } else if (selectedTerm.includes('tháng')) {
-                const months = parseInt(selectedTerm.split(' ')[0]);
-                interest = principal * interestRate * (months / 12);
-            } else {
-                interest = principal * interestRate; // Không kỳ hạn tính theo năm
-            }
+             let termInDays = 0;
 
-            calculatedInterestDiv.textContent = `Lãi suất dự kiến: ${interest.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}`;
+            if (selectedTerm === 'Không kỳ hạn') {
+                 // Giả sử lãi suất không kỳ hạn được tính theo năm
+                 termInDays = 365; // Hoặc một giá trị mặc định nếu tính khác
+             } else if (selectedTerm.includes('ngày')) {
+                 termInDays = parseInt(selectedTerm.split(' ')[0]);
+             } else if (selectedTerm.includes('tháng')) {
+                 termInDays = parseInt(selectedTerm.split(' ')[0]) * 30; // Ước tính 30 ngày/tháng
+             }
+
+             if (termInDays > 0) {
+                interest = principal * interestRate * (termInDays / 365);
+                calculatedInterestDiv.textContent = `Lãi suất dự kiến: ${interest.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}`;
+             } else {
+                 // Xử lý trường hợp không kỳ hạn nếu có cách tính khác
+                 calculatedInterestDiv.textContent = `Lãi suất dự kiến (năm): ${(principal * interestRate).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}`;
+             }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const interestPanelToggle = document.getElementById('interest-panel-toggle');
+            const interestPanelToggle = document.querySelector('.interest-panel-control #interest-panel-toggle'); // Chọn đúng nút toggle
             const interestPanel = document.getElementById('interest-panel');
 
-            interestPanelToggle.addEventListener('click', () => {
-                interestPanel.classList.toggle('open');
-                interestPanel
-                interestPanel.classList.toggle('closed');
-                });
-            });
+             if (interestPanelToggle && interestPanel) {
+                interestPanelToggle.addEventListener('click', (event) => {
+                    event.stopPropagation(); // Ngăn sự kiện click lan ra ngoài
+                    interestPanel.classList.toggle('open');
+                    interestPanel.classList.toggle('closed');
+                 });
+             } else {
+                 console.error("Không tìm thấy interestPanelToggle hoặc interestPanel");
+             }
+
+             // Thêm sự kiện để đóng panel khi click ra ngoài (tùy chọn)
+             document.addEventListener('click', (event) => {
+                if (interestPanel && interestPanel.classList.contains('open') &&
+                    !interestPanel.contains(event.target) &&
+                    !interestPanelToggle.contains(event.target)) {
+                     interestPanel.classList.remove('open');
+                     interestPanel.classList.add('closed');
+                 }
+             });
+
+        });
     </script>
 {% endblock %}
