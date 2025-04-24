@@ -14,7 +14,7 @@ class BRANCH(models.Model):
     vi_do = models.FloatField(verbose_name="Vĩ độ")    # latitude
     gio_mo_cua = models.TimeField(verbose_name="Giờ mở cửa", null=True, blank=True) # Nên cho phép null/blank
     gio_dong_cua = models.TimeField(verbose_name="Giờ đóng cửa", null=True, blank=True) # Nên cho phép null/blank
-    lai_suat = models.FloatField(verbose_name="Lãi suất (cũ)", null=True, blank=True) # Giữ lại hoặc bỏ nếu không dùng nữa
+    tinh_trang = models.BooleanField(default=False,verbose_name="Tình trạng có ATM (Có/Không)")
     hinh_anh = models.ImageField(upload_to='branch_images/', verbose_name="Hình ảnh", null=True, blank=True)
 
 

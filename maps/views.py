@@ -23,7 +23,10 @@ def branch_geojson(request):
                 "address": branch.dia_chi,
                 "opening_time": branch.gio_mo_cua.strftime('%H:%M') if branch.gio_mo_cua else None,
                 "closing_time": branch.gio_dong_cua.strftime('%H:%M') if branch.gio_dong_cua else None,
-                "lai_suat": branch.lai_suat,
+                # --- THAY ĐỔI Ở ĐÂY ---
+                # Thay thế 'lai_suat' bằng 'tinh_trang'
+                "tinh_trang": branch.tinh_trang, # Lấy giá trị True/False từ model
+                # --- KẾT THÚC THAY ĐỔI ---
                 "hinh_anh_url": image_url,  # Sử dụng URL của ảnh
             },
             "geometry": {
@@ -37,4 +40,5 @@ def branch_geojson(request):
         "features": features
     }
 
-    return JsonResponse(data)
+    # Đảm bảo ký tự Unicode hiển thị đúng trong JSON response
+    return JsonResponse(data, json_dumps_params={'ensure_ascii': False})

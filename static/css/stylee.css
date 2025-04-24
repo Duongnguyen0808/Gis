@@ -456,3 +456,29 @@ input[type='checkbox']:checked {
     margin-top: 10px;
     font-weight: bold;
 }
+
+
+/* === ATM STATUS STYLES (Chỉ đổi màu chữ) === */
+
+.atm-status-yes,
+.atm-status-no,
+.atm-status-unknown {
+    font-weight: bold; /* Giữ chữ đậm cho dễ thấy (có thể bỏ nếu muốn) */
+    /* Xóa các thuộc tính background-color, padding, border-radius, display: inline-block */
+}
+
+/* Đặt màu chữ xanh cho trạng thái CÓ ATM */
+.atm-status-yes {
+    color: #28a745; /* Màu chữ xanh lá */
+}
+
+/* Đặt màu chữ đỏ cho trạng thái KHÔNG CÓ ATM */
+.atm-status-no {
+    color: #dc3545; /* Màu chữ đỏ */
+}
+
+/* Đặt màu chữ mặc định (ví dụ: màu đen hoặc xám) cho trạng thái Chưa cập nhật */
+.atm-status-unknown {
+    color: #6c757d; /* Màu chữ xám */
+    font-weight: normal; /* Có thể không cần đậm cho trạng thái này */
+}

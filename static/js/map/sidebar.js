@@ -61,10 +61,12 @@ export function setupSidebar(map) {
     });
 }
 export function showSidebar(properties, latlng, bankInfo) {
+    // --- Bắt đầu hàm showSidebar ---
     if (!sidebar || !contentDiv) {
         console.error("Sidebar elements not found!");
         return;
     }
+    // console.log("Dữ liệu properties nhận được:", properties); // Có thể bỏ comment nếu cần kiểm tra
 
     currentSidebarLatLng = latlng;
     currentSidebarProperties = properties;
@@ -80,18 +82,31 @@ export function showSidebar(properties, latlng, bankInfo) {
         closeTimeHtml = `<p>Giờ đóng cửa: ${properties.closing_time || 'Chưa cập nhật'}</p>`;
     }
 
+    // === PHẦN TẠO HTML CHO TÌNH TRẠNG ATM ===
+    const hasAtm = properties.tinh_trang;
+    let atmStatusHtml = '<span class="atm-status-unknown">Chưa cập nhật</span>';
+
+    if (hasAtm === true) {
+        atmStatusHtml = '<span class="atm-status-yes">Có</span>';
+    } else if (hasAtm === false) {
+        atmStatusHtml = '<span class="atm-status-no">Không</span>';
+    }
+    // === KẾT THÚC PHẦN TẠO HTML ===
+
+    // Sử dụng biến atmStatusHtml chính xác trong innerHTML
     contentDiv.innerHTML = `
         <strong>${properties.name || 'N/A'}</strong> ${properties.hinh_anh_url ? `<img src="${properties.hinh_anh_url}" alt="${properties.name || 'Hình ảnh'}" style="max-width: 100%; height: auto; margin-top: 5px; margin-bottom: 5px;">` : ''}
         <p>Địa chỉ: ${properties.address || 'N/A'}</p>
         ${openTimeHtml}
         ${closeTimeHtml}
         ${statusHtml}
-        <p>Lãi suất: ${properties.lai_suat || 'Chưa cập nhật'}</p>
+        <p>ATM: ${atmStatusHtml}</p> 
         <div style="text-align:center; margin-top:10px;"> <button class="leaflet-popup-button route-button">
             <i class="fas fa-directions"></i> Chỉ đường
         </button>
         </div>
     `;
+
     sidebar.classList.add('open');
     sidebar.classList.remove('closed');
     sidebar.style.display = 'block';
@@ -103,7 +118,9 @@ export function showSidebar(properties, latlng, bankInfo) {
     } else {
         console.warn("Route button not found inside sidebar content!");
     }
+    // --- Kết thúc hàm showSidebar ---
 }
+
 
 function routeButtonClickHandler() {
     if (currentSidebarLatLng && currentSidebarProperties) {
