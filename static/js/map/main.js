@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Đang thử tự động định vị...');
     map.locate({
         setView: true,  // Tự động di chuyển map tới vị trí tìm được
-        maxZoom: 16     // Mức zoom tối đa khi tự động di chuyển
+        maxZoom: 16      // Mức zoom tối đa khi tự động di chuyển
     });
     // Lưu ý: Các listener 'locationfound' và 'locationerror' trong addLocationControl
     // sẽ tự động xử lý kết quả của lệnh map.locate() này.

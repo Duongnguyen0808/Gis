@@ -37,7 +37,135 @@
             <ul id="searchResults" class="list-group"></ul>
         </div>
         <div class="map-container">
-            <div id="map"></div>
+            <div id="map">
+                <div class="interest-panel-control">
+                    <div id="interest-panel-toggle">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <div id="interest-panel" class="closed">
+                        <h2>Bảng Lãi Suất Tiền Gửi</h2>
+                        <table id="interest-rate-table">
+                            <thead>
+                                <tr>
+                                    <th>Kỳ hạn</th>
+                                    <th>VND (%)</th>
+                                    <th>EUR (%)</th>
+                                    <th>USD (%)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="interest-rate-table-body">
+                                <tr>
+                                    <td>Không kỳ hạn</td>
+                                    <td>0.10</td>
+                                    <td>0.30</td>
+                                    <td>0.00</td>
+                                </tr>
+                                <tr>
+                                    <td>7 ngày</td>
+                                    <td>0.20</td>
+                                    <td>0.30</td>
+                                    <td>0.00</td>
+                                </tr>
+                                <tr>
+                                    <td>14 ngày</td>
+                                    <td>0.20</td>
+                                    <td>0.30</td>
+                                    <td>0.00</td>
+                                </tr>
+                                <tr>
+                                    <td>1 tháng</td>
+                                    <td>1.60</td>
+                                    <td>0.30</td>
+                                    <td>0.00</td>
+                                </tr>
+                                <tr>
+                                    <td>2 tháng</td>
+                                    <td>1.60</td>
+                                    <td>0.30</td>
+                                    <td>0.00</td>
+                                </tr>
+                                <tr>
+                                    <td>3 tháng</td>
+                                    <td>1.90</td>
+                                    <td>0.30</td>
+                                    <td>0.00</td>
+                                </tr>
+                                <tr>
+                                    <td>6 tháng</td>
+                                    <td>2.90</td>
+                                    <td>0.30</td>
+                                    <td>0.00</td>
+                                </tr>
+                                <tr>
+                                    <td>9 tháng</td>
+                                    <td>2.90</td>
+                                    <td>0.30</td>
+                                    <td>0.00</td>
+                                </tr>
+                                <tr>
+                                    <td>12 tháng</td>
+                                    <td>4.60</td>
+                                    <td>0.30</td>
+                                    <td>0.00</td>
+                                </tr>
+                                <tr>
+                                    <td>24 tháng</td>
+                                    <td>4.70</td>
+                                    <td>0.30</td>
+                                    <td>0.00</td>
+                                </tr>
+                                <tr>
+                                    <td>36 tháng</td>
+                                    <td>4.70</td>
+                                    <td>0.30</td>
+                                    <td>0.00</td>
+                                </tr>
+                                <tr>
+                                    <td>48 tháng</td>
+                                    <td>4.70</td>
+                                    <td>0.30</td>
+                                    <td>0.00</td>
+                                </tr>
+                                <tr>
+                                    <td>60 tháng</td>
+                                    <td>4.70</td>
+                                    <td>0.30</td>
+                                    <td>0.00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div id="interest-calculator">
+                            <h2>Tính Lãi Suất Tiết Kiệm</h2>
+                            <label for="principal">Số tiền gửi (VND):</label>
+                            <input type="number" id="principal" value="100000">
+
+                            <label for="term">Kỳ hạn:</label>
+                            <select id="term-calculator">
+                                <option value="Không kỳ hạn">Không kỳ hạn</option>
+                                <option value="7 ngày">7 ngày</option>
+                                <option value="14 ngày">14 ngày</option>
+                                <option value="1 tháng">1 tháng</option>
+                                <option value="2 tháng">2 tháng</option>
+                                <option value="3 tháng">3 tháng</option>
+                                <option value="6 tháng">6 tháng</option>
+                                <option value="9 tháng">9 tháng</option>
+                                <option value="12 tháng">12 tháng</option>
+                                <option value="24 tháng">24 tháng</option>
+                                <option value="36 tháng">36 tháng</option>
+                                <option value="48 tháng">48 tháng</option>
+                                <option value="60 tháng">60 tháng</option>
+                            </select>
+
+                            <button onclick="calculateInterest()">Tính Lãi</button>
+                            <div id="interest-panel-toggle">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                            <div id="calculated-interest"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div id="sidebar" class="closed">
                 <div id="sidebar-content"></div>
                 <button id="close-sidebar" class="btn btn-secondary mt-2">Đóng</button>
@@ -59,4 +187,47 @@
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
 
     <script type="module" src="{% static 'js/map/main.js' %}"></script>
+    <script>
+        function calculateInterest() {
+            const principal = parseFloat(document.getElementById('principal').value);
+            const termSelector = document.getElementById('term-calculator');
+            const calculatedInterestDiv = document.getElementById('calculated-interest');
+            const interestRateTableBody = document.getElementById('interest-rate-table-body');
+            const selectedTerm = termSelector.value;
+            let interestRate = 0;
+
+            for (let i = 0; i < interestRateTableBody.rows.length; i++) {
+                const row = interestRateTableBody.rows[i];
+                const termInTable = row.cells[0].textContent;
+                if (termInTable === selectedTerm) {
+                    interestRate = parseFloat(row.cells[1].textContent) / 100; // Lấy lãi suất VND
+                    break;
+                }
+            }
+
+            let interest = 0;
+            if (selectedTerm.includes('ngày')) {
+                const days = parseInt(selectedTerm.split(' ')[0]);
+                interest = principal * interestRate * (days / 365);
+            } else if (selectedTerm.includes('tháng')) {
+                const months = parseInt(selectedTerm.split(' ')[0]);
+                interest = principal * interestRate * (months / 12);
+            } else {
+                interest = principal * interestRate; // Không kỳ hạn tính theo năm
+            }
+
+            calculatedInterestDiv.textContent = `Lãi suất dự kiến: ${interest.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const interestPanelToggle = document.getElementById('interest-panel-toggle');
+            const interestPanel = document.getElementById('interest-panel');
+
+            interestPanelToggle.addEventListener('click', () => {
+                interestPanel.classList.toggle('open');
+                interestPanel
+                interestPanel.classList.toggle('closed');
+                });
+            });
+    </script>
 {% endblock %}

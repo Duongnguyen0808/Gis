@@ -1,4 +1,5 @@
 let locationMarker = null;
+let locationCircle = null;  // Add a variable for the circle
 
 export function addLocationControl(map) {
     const LocationControl = L.Control.extend({
@@ -18,7 +19,11 @@ export function addLocationControl(map) {
     map.addControl(new LocationControl());
 
     map.on('locationfound', function (e) {
+        // Remove previous location marker and circle
         if (locationMarker) map.removeLayer(locationMarker);
+        if (locationCircle) map.removeLayer(locationCircle);
+
+        // Create and add the user location marker
         locationMarker = L.marker(e.latlng, {
             icon: L.divIcon({
                 className: 'user-location-icon',
@@ -27,6 +32,15 @@ export function addLocationControl(map) {
                 iconAnchor: [12, 12],
             }),
         }).addTo(map).bindPopup('Vị trí của bạn');
+
+        // Create and add a circle around the user location
+        locationCircle = L.circle(e.latlng, {
+            radius: 50, // Adjust the radius of the circle
+            color: '#3388FF', // Circle color
+            fillColor: '#3388FF',
+            fillOpacity: 0.3, // Circle opacity
+            weight: 3, // Circle border thickness
+        }).addTo(map);
     });
 
     map.on('locationerror', function (e) {

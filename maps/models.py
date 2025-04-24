@@ -25,9 +25,3 @@ class BRANCH(models.Model):
         """
         return self.ten_chi_nhanh
 
-    # Tùy chọn: Thêm property để lấy URL hình ảnh dễ hơn trong admin hoặc các nơi khác
-    # @property
-    # def image_url(self):
-    #     if self.hinh_anh and hasattr(self.hinh_anh, 'url'):
-    #         return self.hinh_anh.url
-    #     return None

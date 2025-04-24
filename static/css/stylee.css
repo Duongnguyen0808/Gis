@@ -338,3 +338,112 @@ input[type='checkbox']:checked {
     color: red;
     font-weight: bold;
 }
+/* stylee.css */
+/* ... các style hiện có ... */
+
+.interest-panel-control {
+    position: absolute;
+    top: 10px; /* Điều chỉnh vị trí dọc */
+    left: 50px; /* Điều chỉnh vị trí ngang */
+    z-index: 1000;
+}
+
+#interest-panel-toggle {
+    background-color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
+    text-align: center;
+    line-height: 30px;
+    font-size: 18px;
+    color: #333;
+    cursor: pointer;
+}
+
+#interest-panel-toggle i {
+    vertical-align: middle;
+}
+
+#interest-panel {
+    position: absolute;
+    top: 40px; /* Xuống dưới icon toggle */
+    left: 0;
+    background-color: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
+    width: 300px; /* Điều chỉnh độ rộng bảng */
+    max-height: 400px; /* Thêm chiều cao tối đa, điều chỉnh giá trị này theo ý muốn */
+    overflow-y: auto; /* Thêm thanh trượt khi nội dung vượt quá chiều cao */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+#interest-panel.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+#interest-panel.closed {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+}
+
+#interest-rate-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+#interest-rate-table th, #interest-rate-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+#interest-rate-table th {
+    background-color: #f2f2f2;
+}
+
+#interest-calculator {
+    margin-top: 20px;
+}
+
+#interest-calculator label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+#interest-calculator input[type="number"],
+#interest-calculator select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+#interest-calculator button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#interest-calculator button:hover {
+    background-color: #0056b3;
+}
+
+#calculated-interest {
+    margin-top: 10px;
+    font-weight: bold;
+}
