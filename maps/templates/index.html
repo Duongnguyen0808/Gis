@@ -1,269 +1,784 @@
-{% extends 'layout.html' %}
-{% load static %}
-
-{% block title %}
-    Map Page
-{% endblock %}
-
-{% block map %}
-    <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-        crossorigin=""
+{% extends 'layout.html' %} {% load static %} {% block title %} Map Page - Tỷ
+giá & Lãi suất {% endblock %} {% block map %} {# --- Các Link CSS --- #}
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+  crossorigin=""
+/>
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet.fullscreen@1.6.0/Control.FullScreen.css"
+/>
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+/>
+{# Link đến file CSS tùy chỉnh của bạn #}
+<link rel="stylesheet" href="{% static 'css/stylee.css' %}" />
+{% endblock %} {% block content %}
+<div class="container-fluid p-0">
+  {# --- Phần Tìm kiếm --- #}
+  <div class="search-container bg-light p-3 border-bottom">
+    <input
+      type="text"
+      id="searchInput"
+      class="form-control"
+      placeholder="Tìm kiếm ngân hàng, địa điểm..."
     />
-    <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet.fullscreen@1.6.0/Control.FullScreen.css"
-    />
+    <ul id="searchResults" class="list-group mt-2" style="display: none"></ul>
+  </div>
 
-    <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css"
-    />
-
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    />
-
-    <link rel="stylesheet" href="{% static 'css/stylee.css' %}" />
-{% endblock %}
-
-{% block content %}
-    <div class="container-fluid">
-        <div class="search-container">
-            <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm ngân hàng...">
-            <ul id="searchResults" class="list-group"></ul>
+  {# --- Phần Bản đồ và các Controls --- #}
+  <div class="map-container" style="height: calc(100vh - 80px)">
+    {# Giảm chiều cao trừ đi phần search bar #}
+    <div id="map" style="height: 100%; width: 100%">
+      {# --- Control và Panel Lãi Suất --- #}
+      <div class="interest-panel-control">
+        <div id="interest-panel-toggle" title="Bảng lãi suất">
+          <i class="fas fa-percentage"></i>
         </div>
-        <div class="map-container">
-            <div id="map">
-                <div class="interest-panel-control">
-                    <div id="interest-panel-toggle">
-                        <i class="fas fa-percentage"></i>
-                    </div>
-                    <div id="interest-panel" class="closed">
-                        <h2>Bảng Lãi Suất Tiền Gửi</h2>
-                        <table id="interest-rate-table">
-                            <thead>
-                                <tr>
-                                    <th>Kỳ hạn</th>
-                                    <th>VND (%)</th>
-                                    <th>EUR (%)</th>
-                                    <th>USD (%)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="interest-rate-table-body">
-                                <tr>
-                                    <td>Không kỳ hạn</td>
-                                    <td>0.10</td>
-                                    <td>0.30</td>
-                                    <td>0.00</td>
-                                </tr>
-                                <tr>
-                                    <td>7 ngày</td>
-                                    <td>0.20</td>
-                                    <td>0.30</td>
-                                    <td>0.00</td>
-                                </tr>
-                                <tr>
-                                    <td>14 ngày</td>
-                                    <td>0.20</td>
-                                    <td>0.30</td>
-                                    <td>0.00</td>
-                                </tr>
-                                <tr>
-                                    <td>1 tháng</td>
-                                    <td>1.60</td>
-                                    <td>0.30</td>
-                                    <td>0.00</td>
-                                </tr>
-                                <tr>
-                                    <td>2 tháng</td>
-                                    <td>1.60</td>
-                                    <td>0.30</td>
-                                    <td>0.00</td>
-                                </tr>
-                                <tr>
-                                    <td>3 tháng</td>
-                                    <td>1.90</td>
-                                    <td>0.30</td>
-                                    <td>0.00</td>
-                                </tr>
-                                <tr>
-                                    <td>6 tháng</td>
-                                    <td>2.90</td>
-                                    <td>0.30</td>
-                                    <td>0.00</td>
-                                </tr>
-                                <tr>
-                                    <td>9 tháng</td>
-                                    <td>2.90</td>
-                                    <td>0.30</td>
-                                    <td>0.00</td>
-                                </tr>
-                                <tr>
-                                    <td>12 tháng</td>
-                                    <td>4.60</td>
-                                    <td>0.30</td>
-                                    <td>0.00</td>
-                                </tr>
-                                <tr>
-                                    <td>24 tháng</td>
-                                    <td>4.70</td>
-                                    <td>0.30</td>
-                                    <td>0.00</td>
-                                </tr>
-                                <tr>
-                                    <td>36 tháng</td>
-                                    <td>4.70</td>
-                                    <td>0.30</td>
-                                    <td>0.00</td>
-                                </tr>
-                                <tr>
-                                    <td>48 tháng</td>
-                                    <td>4.70</td>
-                                    <td>0.30</td>
-                                    <td>0.00</td>
-                                </tr>
-                                <tr>
-                                    <td>60 tháng</td>
-                                    <td>4.70</td>
-                                    <td>0.30</td>
-                                    <td>0.00</td>
-                                </tr>
-                            </tbody>
-                        </table>
+        <div id="interest-panel" class="panel-container closed">
+          {# Thêm class panel-container chung #}
+          <h2>Bảng Lãi Suất Tiền Gửi</h2>
+          <table id="interest-rate-table">
+            <thead>
+              <tr>
+                <th>Kỳ hạn</th>
+                <th>VND (%)</th>
+                <th>EUR (%)</th>
+                <th>USD (%)</th>
+              </tr>
+            </thead>
+            <tbody id="interest-rate-table-body">
+              {# Nội dung lãi suất giữ nguyên #}
+              <tr>
+                <td>Không kỳ hạn</td>
+                <td>0.10</td>
+                <td>0.30</td>
+                <td>0.00</td>
+              </tr>
+              <tr>
+                <td>7 ngày</td>
+                <td>0.20</td>
+                <td>0.30</td>
+                <td>0.00</td>
+              </tr>
+              <tr>
+                <td>14 ngày</td>
+                <td>0.20</td>
+                <td>0.30</td>
+                <td>0.00</td>
+              </tr>
+              <tr>
+                <td>1 tháng</td>
+                <td>1.60</td>
+                <td>0.30</td>
+                <td>0.00</td>
+              </tr>
+              <tr>
+                <td>2 tháng</td>
+                <td>1.60</td>
+                <td>0.30</td>
+                <td>0.00</td>
+              </tr>
+              <tr>
+                <td>3 tháng</td>
+                <td>1.90</td>
+                <td>0.30</td>
+                <td>0.00</td>
+              </tr>
+              <tr>
+                <td>6 tháng</td>
+                <td>2.90</td>
+                <td>0.30</td>
+                <td>0.00</td>
+              </tr>
+              <tr>
+                <td>9 tháng</td>
+                <td>2.90</td>
+                <td>0.30</td>
+                <td>0.00</td>
+              </tr>
+              <tr>
+                <td>12 tháng</td>
+                <td>4.60</td>
+                <td>0.30</td>
+                <td>0.00</td>
+              </tr>
+              <tr>
+                <td>24 tháng</td>
+                <td>4.70</td>
+                <td>0.30</td>
+                <td>0.00</td>
+              </tr>
+              <tr>
+                <td>36 tháng</td>
+                <td>4.70</td>
+                <td>0.30</td>
+                <td>0.00</td>
+              </tr>
+              <tr>
+                <td>48 tháng</td>
+                <td>4.70</td>
+                <td>0.30</td>
+                <td>0.00</td>
+              </tr>
+              <tr>
+                <td>60 tháng</td>
+                <td>4.70</td>
+                <td>0.30</td>
+                <td>0.00</td>
+              </tr>
+            </tbody>
+          </table>
+          <div id="interest-calculator">
+            <h2>Tính Lãi Suất Tiết Kiệm</h2>
+            <label for="principal">Số tiền gửi (VND):</label>
+            {# Input đã sửa: type="text", bỏ value, thêm placeholder #}
+            <input
+              type="text"
+              inputmode="numeric"
+              id="principal"
+              placeholder="Nhập số tiền gửi"
+              class="principal-input"
+            />
 
-                        <div id="interest-calculator">
-                            <h2>Tính Lãi Suất Tiết Kiệm</h2>
-                            <label for="principal">Số tiền gửi (VND):</label>
-                            <input type="number" id="principal" value="100000">
+            <label for="term-calculator">Kỳ hạn:</label>
+            <select id="term-calculator">
+              {# Options kỳ hạn giữ nguyên #}
+              <option value="Không kỳ hạn">Không kỳ hạn</option>
+              <option value="7 ngày">7 ngày</option>
+              <option value="14 ngày">14 ngày</option>
+              <option value="1 tháng">1 tháng</option>
+              <option value="2 tháng">2 tháng</option>
+              <option value="3 tháng">3 tháng</option>
+              <option value="6 tháng">6 tháng</option>
+              <option value="9 tháng">9 tháng</option>
+              <option value="12 tháng">12 tháng</option>
+              <option value="24 tháng">24 tháng</option>
+              <option value="36 tháng">36 tháng</option>
+              <option value="48 tháng">48 tháng</option>
+              <option value="60 tháng">60 tháng</option>
+            </select>
+            <button onclick="calculateInterest()">Tính Lãi</button>
+            <div id="calculated-interest"></div>
+          </div>
+        </div>
+      </div>
 
-                            <label for="term">Kỳ hạn:</label>
-                            <select id="term-calculator">
-                                <option value="Không kỳ hạn">Không kỳ hạn</option>
-                                <option value="7 ngày">7 ngày</option>
-                                <option value="14 ngày">14 ngày</option>
-                                <option value="1 tháng">1 tháng</option>
-                                <option value="2 tháng">2 tháng</option>
-                                <option value="3 tháng">3 tháng</option>
-                                <option value="6 tháng">6 tháng</option>
-                                <option value="9 tháng">9 tháng</option>
-                                <option value="12 tháng">12 tháng</option>
-                                <option value="24 tháng">24 tháng</option>
-                                <option value="36 tháng">36 tháng</option>
-                                <option value="48 tháng">48 tháng</option>
-                                <option value="60 tháng">60 tháng</option>
-                            </select>
-
-                            <button onclick="calculateInterest()">Tính Lãi</button>
-                            <div id="calculated-interest"></div>
-                        </div>
-                    </div>
+      {# --- Control và Panel Tỷ Giá & Chuyển Đổi (Hoàn thiện) --- #}
+      <div class="exchange-panel-control">
+        <div id="exchange-panel-toggle" title="Chuyển đổi ngoại tệ">
+          <i class="fas fa-exchange-alt"></i>
+        </div>
+        <div id="exchange-panel" class="panel-container closed">
+          {# Thêm class panel-container chung #} {# Bộ chuyển đổi tiền tệ - Chỉ
+          đổi sang VND #}
+          <div id="currency-converter">
+            <h2>Chuyển đổi ngoại tệ sang VND</h2>
+            <div class="row g-3 align-items-stretch mb-3">
+              <div class="col-6">
+                {# Chia đôi cột #}
+                <label class="form-label small">Số tiền cần chuyển</label>
+                <div class="currency-input-box">
+                  <select
+                    id="convert-from-currency"
+                    class="currency-code-display"
+                  >
+                    {# Options Ngoại tệ (không có VND) được thêm bằng JS #}
+                  </select>
+                  {# Input đã sửa: bỏ value, thêm placeholder #}
+                  <input
+                    type="number"
+                    id="convert-amount"
+                    placeholder="Nhập số tiền"
+                    class="form-control currency-amount-input"
+                  />
                 </div>
-
-                <div id="sidebar" class="closed">
-                    <div id="sidebar-content">
-                        </div>
-                    <button id="close-sidebar" class="btn btn-secondary mt-2">Đóng</button>
+              </div>
+              <div class="col-6">
+                {# Chia đôi cột #}
+                <label class="form-label small">Số tiền VND nhận được</label>
+                <div class="currency-input-box result-box">
+                  <span class="currency-code-display">VND</span> {# Hiển thị VND
+                  cố định #}
+                  <input
+                    type="text"
+                    id="conversion-result-amount"
+                    class="form-control currency-amount-input"
+                    readonly
+                    placeholder="Kết quả (VND)"
+                  />
                 </div>
-                </div> </div> <ul class="layers">
-             </ul>
-    </div> {% endblock %}
+              </div>
+            </div>
+            <div id="conversion-result" class="mt-2 small text-success"></div>
+            {# Hiển thị tỷ giá mua tiền mặt áp dụng #}
+          </div>
 
-{% block script %}
-    <script
-        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-        crossorigin=""
-    ></script>
+          {# Bảng tỷ giá - Chỉ hiển thị Mua Tiền Mặt #}
+          <div class="exchange-rate-section mt-4">
+            {# Đổi tên cột thành "Tỷ giá" và làm to hơn bằng class #}
+            <h3 class="mb-3 exchange-table-title">
+              Tỷ giá Mua Tiền Mặt tham khảo
+            </h3>
+            <div class="table-responsive">
+              <table
+                id="exchange-rate-table"
+                class="table table-bordered table-striped table-hover table-sm"
+              >
+                <thead class="table-info">
+                  {# Đổi màu header #}
+                  <tr>
+                    {# Tên cột đã được chỉnh lại ở đây #}
+                    <th>Ngoại tệ</th>
+                    <th>Tên đầy đủ</th>
+                    <th>Tỷ giá mua TM (VND)</th>
+                  </tr>
+                </thead>
+                <tbody id="exchange-rate-table-body-simple">
+                  {# Đổi ID để JS không bị nhầm #} {# Dữ liệu Mua TM #}
+                  <tr data-code="USD" data-buy-cash="25805.00">
+                    <td>
+                      <img
+                        src="{% static 'images/flags/us.png' %}"
+                        alt="USD"
+                        width="20"
+                        class="me-1"
+                      />
+                      USD
+                    </td>
+                    <td>US DOLLAR</td>
+                    <td>25,805.00</td>
+                  </tr>
+                  <tr data-code="EUR" data-buy-cash="28801.35">
+                    <td>
+                      <img
+                        src="{% static 'images/flags/eu.png' %}"
+                        alt="EUR"
+                        width="20"
+                        class="me-1"
+                      />
+                      EUR
+                    </td>
+                    <td>EURO</td>
+                    <td>28,801.35</td>
+                  </tr>
+                  <tr data-code="GBP" data-buy-cash="33766.92">
+                    <td>
+                      <img
+                        src="{% static 'images/flags/gb.png' %}"
+                        alt="GBP"
+                        width="20"
+                        class="me-1"
+                      />
+                      GBP
+                    </td>
+                    <td>UK POUND STERLING</td>
+                    <td>33,766.92</td>
+                  </tr>
+                  <tr data-code="JPY" data-buy-cash="175.65">
+                    <td>
+                      <img
+                        src="{% static 'images/flags/jp.png' %}"
+                        alt="JPY"
+                        width="20"
+                        class="me-1"
+                      />
+                      JPY
+                    </td>
+                    <td>JAPANESE YEN</td>
+                    <td>175.65</td>
+                  </tr>
+                  <tr data-code="AUD" data-buy-cash="16241.52">
+                    <td>
+                      <img
+                        src="{% static 'images/flags/au.png' %}"
+                        alt="AUD"
+                        width="20"
+                        class="me-1"
+                      />
+                      AUD
+                    </td>
+                    <td>AUSTRALIAN DOLLAR</td>
+                    <td>16,241.52</td>
+                  </tr>
+                  <tr data-code="SGD" data-buy-cash="19311.55">
+                    <td>
+                      <img
+                        src="{% static 'images/flags/sg.png' %}"
+                        alt="SGD"
+                        width="20"
+                        class="me-1"
+                      />
+                      SGD
+                    </td>
+                    <td>SINGAPORE DOLLAR</td>
+                    <td>19,311.55</td>
+                  </tr>
+                  <tr data-code="THB" data-buy-cash="687.60">
+                    <td>
+                      <img
+                        src="{% static 'images/flags/th.png' %}"
+                        alt="THB"
+                        width="20"
+                        class="me-1"
+                      />
+                      THB
+                    </td>
+                    <td>THAI BAHT</td>
+                    <td>687.60</td>
+                  </tr>
+                  <tr data-code="CAD" data-buy-cash="18313.69">
+                    <td>
+                      <img
+                        src="{% static 'images/flags/ca.png' %}"
+                        alt="CAD"
+                        width="20"
+                        class="me-1"
+                      />
+                      CAD
+                    </td>
+                    <td>CANADIAN DOLLAR</td>
+                    <td>18,313.69</td>
+                  </tr>
+                  <tr data-code="CHF" data-buy-cash="30558.84">
+                    <td>
+                      <img
+                        src="{% static 'images/flags/ch.png' %}"
+                        alt="CHF"
+                        width="20"
+                        class="me-1"
+                      />
+                      CHF
+                    </td>
+                    <td>SWISS FRANC</td>
+                    <td>30,558.84</td>
+                  </tr>
+                  <tr data-code="HKD" data-buy-cash="3261.54">
+                    <td>
+                      <img
+                        src="{% static 'images/flags/hk.png' %}"
+                        alt="HKD"
+                        width="20"
+                        class="me-1"
+                      />
+                      HKD
+                    </td>
+                    <td>HONG KONG DOLLAR</td>
+                    <td>3,261.54</td>
+                  </tr>
+                  <tr data-code="CNY" data-buy-cash="3482.36">
+                    <td>
+                      <img
+                        src="{% static 'images/flags/cn.png' %}"
+                        alt="CNY"
+                        width="20"
+                        class="me-1"
+                      />
+                      CNY
+                    </td>
+                    <td>CHINESE YUAN</td>
+                    <td>3,482.36</td>
+                  </tr>
+                  {# Bỏ các dòng còn lại nếu cần hoặc cập nhật chỉ với giá Mua
+                  TM #}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    <script src="https://unpkg.com/leaflet.fullscreen@1.6.0/Control.FullScreen.js"></script>
+      {# --- Sidebar (Hiện có) --- #}
+      <div id="sidebar" class="closed">
+        <div id="sidebar-content"></div>
+        <button id="close-sidebar" class="btn btn-danger btn-sm mt-2">
+          Đóng
+        </button>
+      </div>
 
-    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+      {# --- Điều khiển lớp bản đồ (Layers) --- #} {# --- Điều khiển lớp bản đồ
+      (Layers) --- #}
+      <ul class="layers"></ul>
+    </div>
+    {# End #map #}
+  </div>
+  {# End .map-container #}
+</div>
+{# End .container-fluid #} {% endblock %} {% block script %} {# --- Các thư viện
+JS --- #}
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+  crossorigin=""
+></script>
+<script src="https://unpkg.com/leaflet.fullscreen@1.6.0/Control.FullScreen.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
 
-    <script type="module" src="{% static 'js/map/main.js' %}"></script>
-    <script>
-        function calculateInterest() {
-            const principal = parseFloat(document.getElementById('principal').value);
-            const termSelector = document.getElementById('term-calculator');
-            const calculatedInterestDiv = document.getElementById('calculated-interest');
-            const interestRateTableBody = document.getElementById('interest-rate-table-body');
-            const selectedTerm = termSelector.value;
-            let interestRate = 0;
+{# --- Code JS tùy chỉnh --- #}
+<script type="module" src="{% static 'js/map/main.js' %}"></script>
 
-            if (!principal || isNaN(principal)) {
-                calculatedInterestDiv.textContent = "Vui lòng nhập số tiền hợp lệ.";
-                return;
+<script>
+  // --- Hàm Tính Lãi Suất (Đã sửa phần đọc input) ---
+  function calculateInterest() {
+    const principalInput = document.getElementById("principal");
+    const termSelector = document.getElementById("term-calculator");
+    const calculatedInterestDiv = document.getElementById(
+      "calculated-interest"
+    );
+    const interestRateTableBody = document.getElementById(
+      "interest-rate-table-body"
+    );
+
+    // Lấy giá trị và loại bỏ dấu chấm định dạng
+    const rawValue = principalInput.value.replace(/\./g, ""); // Bỏ dấu chấm
+    const principal = parseFloat(rawValue); // Parse số
+
+    const selectedTerm = termSelector.value;
+    let interestRate = 0;
+
+    calculatedInterestDiv.textContent = ""; // Clear previous result
+
+    // Kiểm tra principal sau khi đã parse
+    if (!principal || isNaN(principal) || principal <= 0) {
+      calculatedInterestDiv.textContent = "Vui lòng nhập số tiền gửi hợp lệ.";
+      calculatedInterestDiv.style.color = "red";
+      return;
+    }
+
+    if (!interestRateTableBody) {
+      calculatedInterestDiv.textContent = "Lỗi: Không tìm thấy bảng lãi suất.";
+      calculatedInterestDiv.style.color = "red";
+      return;
+    }
+
+    // ... (Phần còn lại của hàm calculateInterest giữ nguyên) ...
+    let foundRate = false;
+    for (let i = 0; i < interestRateTableBody.rows.length; i++) {
+      const row = interestRateTableBody.rows[i];
+      if (row.cells.length > 1) {
+        const termInTable = row.cells[0].textContent.trim();
+        if (termInTable === selectedTerm) {
+          interestRate = parseFloat(row.cells[1].textContent) / 100;
+          foundRate = true;
+          break;
+        }
+      }
+    }
+    if (!foundRate || isNaN(interestRate)) {
+      calculatedInterestDiv.textContent =
+        "Không tìm thấy lãi suất cho kỳ hạn này.";
+      calculatedInterestDiv.style.color = "red";
+      return;
+    }
+    let interest = 0;
+    let termInDays = 0;
+    let calculationBasis = 365;
+    if (selectedTerm === "Không kỳ hạn") {
+      interest = principal * interestRate;
+      calculatedInterestDiv.textContent = `Lãi suất năm (ước tính): ${interest.toLocaleString(
+        "vi-VN",
+        { style: "currency", currency: "VND" }
+      )}`;
+    } else if (selectedTerm.includes("ngày")) {
+      termInDays = parseInt(selectedTerm.split(" ")[0]);
+    } else if (selectedTerm.includes("tháng")) {
+      termInDays = parseInt(selectedTerm.split(" ")[0]) * 30;
+    }
+    if (termInDays > 0) {
+      interest = principal * interestRate * (termInDays / calculationBasis);
+      calculatedInterestDiv.textContent = `Lãi suất dự kiến: ${interest.toLocaleString(
+        "vi-VN",
+        { style: "currency", currency: "VND" }
+      )}`;
+    } else if (selectedTerm !== "Không kỳ hạn") {
+      calculatedInterestDiv.textContent = "Kỳ hạn không hợp lệ.";
+      calculatedInterestDiv.style.color = "red";
+      return;
+    }
+    calculatedInterestDiv.style.color = "green";
+  }
+
+  // --- Các Hàm Hỗ Trợ Chuyển Đổi Tiền Tệ (Đơn giản hóa LẦN 2) ---
+  function getExchangeRatesSimple() {
+    const rates = {};
+    const tableBody = document.getElementById(
+      "exchange-rate-table-body-simple"
+    );
+    if (!tableBody) {
+      console.error("Simple exchange rate table body not found!");
+      return rates;
+    }
+    for (let i = 0; i < tableBody.rows.length; i++) {
+      const row = tableBody.rows[i];
+      const code = row.getAttribute("data-code");
+      if (code && row.cells.length >= 3) {
+        rates[code] = {
+          buyCash:
+            parseFloat(row.getAttribute("data-buy-cash").replace(/,/g, "")) ||
+            0,
+          name: row.cells[1] ? row.cells[1].textContent.trim() : code,
+        };
+      }
+    }
+    return rates;
+  }
+
+  function populateForeignCurrencyOptions() {
+    const rates = getExchangeRatesSimple();
+    const fromSelect = document.getElementById("convert-from-currency");
+    if (!fromSelect) {
+      console.error("From currency select element not found!");
+      return;
+    }
+    fromSelect.innerHTML = "";
+    for (const code in rates) {
+      if (rates.hasOwnProperty(code)) {
+        const option = document.createElement("option");
+        option.value = code;
+        option.textContent = code;
+        fromSelect.appendChild(option);
+      }
+    }
+    if (fromSelect.options.length > 0) {
+      fromSelect.value = "USD";
+    }
+  }
+
+  // --- Hàm Chuyển Đổi Tiền Tệ Chính (Chỉ đổi sang VND, dùng Mua TM) ---
+  function convertCurrencyToVND() {
+    const amountInput = document.getElementById("convert-amount");
+    const fromSelect = document.getElementById("convert-from-currency");
+    const resultDiv = document.getElementById("conversion-result");
+    const resultAmountInput = document.getElementById(
+      "conversion-result-amount"
+    );
+
+    // Đổi type='number' sang 'text' để tránh xung đột định dạng
+    if (amountInput.type === "number") {
+      amountInput.type = "text";
+      amountInput.inputMode = "numeric"; // Gợi ý bàn phím số
+    }
+
+    // Lấy giá trị và xóa định dạng (dấu chấm) để parse
+    const rawAmountValue = amountInput.value.replace(/\./g, "");
+    const amount = parseFloat(rawAmountValue);
+
+    const fromCurrency = fromSelect.value;
+
+    resultDiv.textContent = "";
+    resultAmountInput.placeholder = "Kết quả (VND)";
+
+    // Xóa kết quả nếu input trống hoặc không hợp lệ
+    if (!amountInput.value.trim() || isNaN(amount) || amount <= 0) {
+      resultAmountInput.value = "";
+      resultAmountInput.placeholder =
+        amount <= 0 && amountInput.value.trim()
+          ? "Nhập số > 0"
+          : "Kết quả (VND)";
+      if (amountInput.value.trim() && (isNaN(amount) || amount <= 0)) {
+        // Chỉ hiển thị lỗi nếu có nhập liệu nhưng không hợp lệ
+        resultAmountInput.placeholder =
+          amount <= 0 ? "Nhập số > 0" : "Số tiền không hợp lệ";
+      } else {
+        resultDiv.textContent = ""; // Xóa tỷ giá nếu input trống
+      }
+      return;
+    }
+
+    if (!fromCurrency) {
+      resultAmountInput.value = "";
+      resultAmountInput.placeholder = "Chọn ngoại tệ";
+      return;
+    }
+
+    const rates = getExchangeRatesSimple();
+
+    if (!rates[fromCurrency]) {
+      resultAmountInput.value = "";
+      resultAmountInput.placeholder = "Lỗi tỷ giá";
+      resultDiv.textContent = `Không tìm thấy tỷ giá mua tiền mặt cho ${fromCurrency}.`;
+      resultDiv.style.color = "red";
+      return;
+    }
+
+    let result = 0;
+    let rateUsed = rates[fromCurrency].buyCash; // Luôn dùng Mua Tiền Mặt
+    let rateDescription = `tỷ giá mua TM ${fromCurrency}`;
+
+    if (rateUsed <= 0) {
+      resultAmountInput.value = "";
+      resultAmountInput.placeholder = "Lỗi tỷ giá";
+      resultDiv.textContent = `Lỗi: Tỷ giá mua TM ${fromCurrency} không hợp lệ.`;
+      resultDiv.style.color = "red";
+      return;
+    }
+
+    result = amount * rateUsed;
+    resultAmountInput.value = result.toLocaleString("vi-VN", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    });
+
+    resultDiv.textContent = `Áp dụng ${rateDescription}: ${rateUsed.toLocaleString(
+      "vi-VN"
+    )}`;
+    resultDiv.style.color = "green";
+  }
+
+  // --- Xử lý Panel Toggles và Sự kiện ---
+  document.addEventListener("DOMContentLoaded", () => {
+    const interestPanelToggle = document.getElementById(
+      "interest-panel-toggle"
+    );
+    const interestPanel = document.getElementById("interest-panel");
+    const exchangePanelToggle = document.getElementById(
+      "exchange-panel-toggle"
+    );
+    const exchangePanel = document.getElementById("exchange-panel");
+    const amountInput = document.getElementById("convert-amount"); // Tỷ giá
+    const fromSelect = document.getElementById("convert-from-currency"); // Tỷ giá
+    const principalInput = document.getElementById("principal"); // Lãi suất
+
+    // --- Panel Toggle Logic (Giữ nguyên) ---
+    function setupPanelToggle(toggleButton, panelToToggle, otherPanel) {
+      if (toggleButton && panelToToggle) {
+        toggleButton.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const isOpening = !panelToToggle.classList.contains("open");
+          if (otherPanel && otherPanel.classList.contains("open")) {
+            otherPanel.classList.remove("open");
+            otherPanel.classList.add("closed");
+          }
+          if (isOpening) {
+            panelToToggle.classList.add("open");
+            panelToToggle.classList.remove("closed");
+            if (panelToToggle.id === "exchange-panel") {
+              convertCurrencyToVND();
             }
-            if (!interestRateTableBody) {
-                 calculatedInterestDiv.textContent = "Lỗi: Không tìm thấy bảng lãi suất.";
-                return;
-            }
+            // Không cần gọi calculateInterest() khi mở panel lãi suất
+          } else {
+            panelToToggle.classList.remove("open");
+            panelToToggle.classList.add("closed");
+          }
+        });
+      } else {
+        console.error(
+          "Toggle button or panel not found for:",
+          panelToToggle ? panelToToggle.id : "unknown"
+        );
+      }
+    }
+    setupPanelToggle(interestPanelToggle, interestPanel, exchangePanel);
+    setupPanelToggle(exchangePanelToggle, exchangePanel, interestPanel);
 
+    // --- Đóng panel khi click bên ngoài (Giữ nguyên) ---
+    document.addEventListener("click", (event) => {
+      const clickIsOutsideInterest =
+        interestPanel &&
+        interestPanel.classList.contains("open") &&
+        !interestPanel.contains(event.target) &&
+        interestPanelToggle &&
+        !interestPanelToggle.contains(event.target);
+      const clickIsOutsideExchange =
+        exchangePanel &&
+        exchangePanel.classList.contains("open") &&
+        !exchangePanel.contains(event.target) &&
+        exchangePanelToggle &&
+        !exchangePanelToggle.contains(event.target);
+      if (clickIsOutsideInterest) {
+        interestPanel.classList.remove("open");
+        interestPanel.classList.add("closed");
+      }
+      if (clickIsOutsideExchange) {
+        exchangePanel.classList.remove("open");
+        exchangePanel.classList.add("closed");
+      }
+    });
 
-            for (let i = 0; i < interestRateTableBody.rows.length; i++) {
-                const row = interestRateTableBody.rows[i];
-                 if (row.cells.length > 1) { // Kiểm tra có đủ ô không
-                    const termInTable = row.cells[0].textContent;
-                    if (termInTable === selectedTerm) {
-                        interestRate = parseFloat(row.cells[1].textContent) / 100; // Lấy lãi suất VND
-                        break;
-                    }
-                 }
-            }
+    // --- Tự động định dạng ô nhập tiền LÃI SUẤT ---
+    if (principalInput) {
+      principalInput.addEventListener("input", (event) => {
+        let value = event.target.value;
+        let cursorPosition = event.target.selectionStart; // Lưu vị trí con trỏ
+        let originalLength = value.length;
 
-             if (isNaN(interestRate)) {
-                 calculatedInterestDiv.textContent = "Không tìm thấy lãi suất cho kỳ hạn này.";
-                 return;
-             }
+        // 1. Chỉ giữ lại số
+        let rawValue = value.replace(/[^0-9]/g, "");
 
-            let interest = 0;
-             let termInDays = 0;
+        // 2. Chuyển thành số (hoặc 0 nếu rỗng)
+        const numberValue = parseInt(rawValue, 10) || 0;
 
-            if (selectedTerm === 'Không kỳ hạn') {
-                 // Giả sử lãi suất không kỳ hạn được tính theo năm
-                 termInDays = 365; // Hoặc một giá trị mặc định nếu tính khác
-             } else if (selectedTerm.includes('ngày')) {
-                 termInDays = parseInt(selectedTerm.split(' ')[0]);
-             } else if (selectedTerm.includes('tháng')) {
-                 termInDays = parseInt(selectedTerm.split(' ')[0]) * 30; // Ước tính 30 ngày/tháng
-             }
+        // 3. Định dạng lại với dấu chấm
+        let formattedValue = numberValue.toLocaleString("vi-VN");
 
-             if (termInDays > 0) {
-                interest = principal * interestRate * (termInDays / 365);
-                calculatedInterestDiv.textContent = `Lãi suất dự kiến: ${interest.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}`;
-             } else {
-                 // Xử lý trường hợp không kỳ hạn nếu có cách tính khác
-                 calculatedInterestDiv.textContent = `Lãi suất dự kiến (năm): ${(principal * interestRate).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}`;
-             }
+        // Xử lý trường hợp người dùng xóa hết số
+        if (rawValue === "") {
+          formattedValue = "";
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const interestPanelToggle = document.querySelector('.interest-panel-control #interest-panel-toggle'); // Chọn đúng nút toggle
-            const interestPanel = document.getElementById('interest-panel');
+        // 4. Cập nhật lại giá trị ô input
+        event.target.value = formattedValue;
 
-             if (interestPanelToggle && interestPanel) {
-                interestPanelToggle.addEventListener('click', (event) => {
-                    event.stopPropagation(); // Ngăn sự kiện click lan ra ngoài
-                    interestPanel.classList.toggle('open');
-                    interestPanel.classList.toggle('closed');
-                 });
-             } else {
-                 console.error("Không tìm thấy interestPanelToggle hoặc interestPanel");
-             }
+        // 5. Điều chỉnh lại vị trí con trỏ sau khi định dạng
+        let newLength = formattedValue.length;
+        let lengthDiff = newLength - originalLength;
+        // Ước tính vị trí mới, có thể chưa hoàn hảo trong mọi trường hợp
+        let newCursorPosition = Math.max(0, cursorPosition + lengthDiff);
+        // Cố gắng đặt lại vị trí con trỏ
+        try {
+          event.target.setSelectionRange(newCursorPosition, newCursorPosition);
+        } catch (e) {
+          // Một số trình duyệt có thể lỗi nếu input không focus, bỏ qua lỗi này
+        }
+      });
+      // Không cần listener focus/blur nữa vì định dạng liên tục khi input
+    }
 
-             // Thêm sự kiện để đóng panel khi click ra ngoài (tùy chọn)
-             document.addEventListener('click', (event) => {
-                if (interestPanel && interestPanel.classList.contains('open') &&
-                    !interestPanel.contains(event.target) &&
-                    !interestPanelToggle.contains(event.target)) {
-                     interestPanel.classList.remove('open');
-                     interestPanel.classList.add('closed');
-                 }
-             });
+    // --- Tự động định dạng ô nhập tiền TỶ GIÁ ---
+    if (amountInput) {
+      amountInput.addEventListener("input", (event) => {
+        let value = event.target.value;
+        let cursorPosition = event.target.selectionStart;
+        let originalLength = value.length;
 
-        });
-    </script>
+        let rawValue = value.replace(/[^0-9]/g, "");
+        const numberValue = parseInt(rawValue, 10) || 0;
+        let formattedValue = numberValue.toLocaleString("vi-VN");
+
+        if (rawValue === "") {
+          formattedValue = "";
+        }
+
+        event.target.value = formattedValue;
+
+        let newLength = formattedValue.length;
+        let lengthDiff = newLength - originalLength;
+        let newCursorPosition = Math.max(0, cursorPosition + lengthDiff);
+
+        try {
+          event.target.setSelectionRange(newCursorPosition, newCursorPosition);
+        } catch (e) {}
+
+        // Gọi hàm tính toán sau khi định dạng
+        convertCurrencyToVND();
+      });
+    }
+
+    // --- Tự động tính lại KHI THAY ĐỔI SELECT TỶ GIÁ ---
+    if (fromSelect) fromSelect.addEventListener("change", convertCurrencyToVND);
+
+    // --- Populate currency options on load ---
+    populateForeignCurrencyOptions();
+    // Initial calculation on load (sẽ hiển thị placeholder vì input trống)
+    convertCurrencyToVND();
+  });
+</script>
+
 {% endblock %}
