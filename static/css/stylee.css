@@ -589,6 +589,7 @@ input[type='checkbox']:checked {
 
 /* === CURRENCY CONVERTER STYLES === */
 #currency-converter {
+    font-family: Arial, Helvetica, sans-serif !important;
     margin-top: 20px;
     padding-top: 15px;
     border-top: 1px solid #eee;
@@ -651,3 +652,19 @@ input[type='checkbox']:checked {
 #interest-calculator input#principal {
     text-align: right; /* Căn phải số tiền */
 }
+
+
+/* --- CSS FONT CHO CHATBOX --- */
+
+/* Áp dụng font cho toàn bộ cửa sổ chat */
+#chat-window {
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  
+  /* Đảm bảo input và button cũng sử dụng font này (chúng thường không tự kế thừa) */
+  #chat-window input,
+  #chat-window button {
+    font-family: inherit; /* Bảo chúng kế thừa font từ #chat-window */
+    /* Hoặc bạn có thể đặt trực tiếp: */
+    /* font-family: Arial, Helvetica, sans-serif; */
+  }
