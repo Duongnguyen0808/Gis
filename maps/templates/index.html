@@ -18,8 +18,127 @@ giá & Lãi suất {% endblock %} {% block map %} {# --- Các Link CSS --- #}
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 />
-{# Link đến file CSS tùy chỉnh của bạn #}
 <link rel="stylesheet" href="{% static 'css/stylee.css' %}" />
+
+{# --- CSS CHO CHATBOX --- #}
+<style>
+  #open-chat-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1002;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #open-chat-btn:hover {
+    background-color: #0056b3;
+  }
+  #chat-window {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 350px;
+    height: 450px;
+    max-height: calc(100vh - 100px);
+    border: 1px solid #ccc;
+    background: white;
+    z-index: 1001;
+    display: none;
+    flex-direction: column;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+  }
+  #chat-window.open {
+    display: flex;
+  }
+  #chat-window.closed {
+    display: none;
+  }
+  #chat-header {
+    background: #007bff;
+    color: white;
+    padding: 10px 15px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  #close-chat-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0 5px;
+  }
+  #chat-messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 15px;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+  }
+  .message {
+    padding: 8px 12px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    max-width: 80%;
+    word-wrap: break-word;
+    line-height: 1.4;
+  }
+  .user-message {
+    background-color: #007bff;
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 5px;
+  }
+  .bot-message {
+    background-color: #e9ecef;
+    color: #333;
+    align-self: flex-start;
+    border-bottom-left-radius: 5px;
+  }
+  #chat-input-area {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #eee;
+    background: #fff;
+  }
+  #chat-input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    margin-right: 10px;
+    outline: none;
+  }
+  #chat-input:focus {
+    border-color: #007bff;
+  }
+  #send-chat-btn {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+  #send-chat-btn:hover {
+    background-color: #0056b3;
+  }
+</style>
 {% endblock %} {% block content %}
 <div class="container-fluid p-0">
   {# --- Phần Tìm kiếm --- #}
@@ -32,10 +151,8 @@ giá & Lãi suất {% endblock %} {% block map %} {# --- Các Link CSS --- #}
     />
     <ul id="searchResults" class="list-group mt-2" style="display: none"></ul>
   </div>
-
   {# --- Phần Bản đồ và các Controls --- #}
   <div class="map-container" style="height: calc(100vh - 80px)">
-    {# Giảm chiều cao trừ đi phần search bar #}
     <div id="map" style="height: 100%; width: 100%">
       {# --- Control và Panel Lãi Suất --- #}
       <div class="interest-panel-control">
@@ -43,7 +160,6 @@ giá & Lãi suất {% endblock %} {% block map %} {# --- Các Link CSS --- #}
           <i class="fas fa-percentage"></i>
         </div>
         <div id="interest-panel" class="panel-container closed">
-          {# Thêm class panel-container chung #}
           <h2>Bảng Lãi Suất Tiền Gửi</h2>
           <table id="interest-rate-table">
             <thead>
@@ -55,7 +171,6 @@ giá & Lãi suất {% endblock %} {% block map %} {# --- Các Link CSS --- #}
               </tr>
             </thead>
             <tbody id="interest-rate-table-body">
-              {# Nội dung lãi suất giữ nguyên #}
               <tr>
                 <td>Không kỳ hạn</td>
                 <td>0.10</td>
@@ -139,7 +254,6 @@ giá & Lãi suất {% endblock %} {% block map %} {# --- Các Link CSS --- #}
           <div id="interest-calculator">
             <h2>Tính Lãi Suất Tiết Kiệm</h2>
             <label for="principal">Số tiền gửi (VND):</label>
-            {# Input đã sửa: type="text", bỏ value, thêm placeholder #}
             <input
               type="text"
               inputmode="numeric"
@@ -147,10 +261,8 @@ giá & Lãi suất {% endblock %} {% block map %} {# --- Các Link CSS --- #}
               placeholder="Nhập số tiền gửi"
               class="principal-input"
             />
-
             <label for="term-calculator">Kỳ hạn:</label>
             <select id="term-calculator">
-              {# Options kỳ hạn giữ nguyên #}
               <option value="Không kỳ hạn">Không kỳ hạn</option>
               <option value="7 ngày">7 ngày</option>
               <option value="14 ngày">14 ngày</option>
@@ -170,29 +282,22 @@ giá & Lãi suất {% endblock %} {% block map %} {# --- Các Link CSS --- #}
           </div>
         </div>
       </div>
-
-      {# --- Control và Panel Tỷ Giá & Chuyển Đổi (Hoàn thiện) --- #}
+      {# --- Control và Panel Tỷ Giá & Chuyển Đổi --- #}
       <div class="exchange-panel-control">
         <div id="exchange-panel-toggle" title="Chuyển đổi ngoại tệ">
           <i class="fas fa-exchange-alt"></i>
         </div>
         <div id="exchange-panel" class="panel-container closed">
-          {# Thêm class panel-container chung #} {# Bộ chuyển đổi tiền tệ - Chỉ
-          đổi sang VND #}
           <div id="currency-converter">
             <h2>Chuyển đổi ngoại tệ sang VND</h2>
             <div class="row g-3 align-items-stretch mb-3">
               <div class="col-6">
-                {# Chia đôi cột #}
                 <label class="form-label small">Số tiền cần chuyển</label>
                 <div class="currency-input-box">
                   <select
                     id="convert-from-currency"
                     class="currency-code-display"
-                  >
-                    {# Options Ngoại tệ (không có VND) được thêm bằng JS #}
-                  </select>
-                  {# Input đã sửa: bỏ value, thêm placeholder #}
+                  ></select>
                   <input
                     type="number"
                     id="convert-amount"
@@ -202,11 +307,9 @@ giá & Lãi suất {% endblock %} {% block map %} {# --- Các Link CSS --- #}
                 </div>
               </div>
               <div class="col-6">
-                {# Chia đôi cột #}
                 <label class="form-label small">Số tiền VND nhận được</label>
                 <div class="currency-input-box result-box">
-                  <span class="currency-code-display">VND</span> {# Hiển thị VND
-                  cố định #}
+                  <span class="currency-code-display">VND</span>
                   <input
                     type="text"
                     id="conversion-result-amount"
@@ -218,12 +321,8 @@ giá & Lãi suất {% endblock %} {% block map %} {# --- Các Link CSS --- #}
               </div>
             </div>
             <div id="conversion-result" class="mt-2 small text-success"></div>
-            {# Hiển thị tỷ giá mua tiền mặt áp dụng #}
           </div>
-
-          {# Bảng tỷ giá - Chỉ hiển thị Mua Tiền Mặt #}
           <div class="exchange-rate-section mt-4">
-            {# Đổi tên cột thành "Tỷ giá" và làm to hơn bằng class #}
             <h3 class="mb-3 exchange-table-title">
               Tỷ giá Mua Tiền Mặt tham khảo
             </h3>
@@ -233,16 +332,13 @@ giá & Lãi suất {% endblock %} {% block map %} {# --- Các Link CSS --- #}
                 class="table table-bordered table-striped table-hover table-sm"
               >
                 <thead class="table-info">
-                  {# Đổi màu header #}
                   <tr>
-                    {# Tên cột đã được chỉnh lại ở đây #}
                     <th>Ngoại tệ</th>
                     <th>Tên đầy đủ</th>
                     <th>Tỷ giá mua TM (VND)</th>
                   </tr>
                 </thead>
                 <tbody id="exchange-rate-table-body-simple">
-                  {# Đổi ID để JS không bị nhầm #} {# Dữ liệu Mua TM #}
                   <tr data-code="USD" data-buy-cash="25805.00">
                     <td>
                       <img
@@ -386,30 +482,46 @@ giá & Lãi suất {% endblock %} {% block map %} {# --- Các Link CSS --- #}
                     <td>CHINESE YUAN</td>
                     <td>3,482.36</td>
                   </tr>
-                  {# Bỏ các dòng còn lại nếu cần hoặc cập nhật chỉ với giá Mua
-                  TM #}
                 </tbody>
               </table>
             </div>
           </div>
         </div>
       </div>
-
-      {# --- Sidebar (Hiện có) --- #}
+      {# --- Sidebar --- #}
       <div id="sidebar" class="closed">
         <div id="sidebar-content"></div>
         <button id="close-sidebar" class="btn btn-danger btn-sm mt-2">
           Đóng
         </button>
       </div>
-
-      {# --- Điều khiển lớp bản đồ (Layers) --- #} {# --- Điều khiển lớp bản đồ
-      (Layers) --- #}
+      {# --- Điều khiển lớp bản đồ --- #}
       <ul class="layers"></ul>
     </div>
     {# End #map #}
   </div>
-  {# End .map-container #}
+  {# End .map-container #} {# --- HTML CHO CHATBOX --- #}
+  <button id="open-chat-btn" title="Chat với Bot">
+    <i class="fas fa-comment-dots"></i>
+  </button>
+  <div id="chat-window" class="closed">
+    <div id="chat-header">
+      <span>Chatbot Hỗ Trợ</span>
+      <button id="close-chat-btn" title="Đóng">&times;</button>
+    </div>
+    <div id="chat-messages">
+      <div class="message bot-message">
+        Chào bạn! Bạn cần thông tin về lãi suất hay tỷ giá?
+      </div>
+    </div>
+    <div id="chat-input-area">
+      <input type="text" id="chat-input" placeholder="Nhập câu hỏi..." />
+      <button id="send-chat-btn" title="Gửi">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+  {# --- KẾT THÚC HTML CHATBOX --- #}
 </div>
 {# End .container-fluid #} {% endblock %} {% block script %} {# --- Các thư viện
 JS --- #}
@@ -421,11 +533,12 @@ JS --- #}
 <script src="https://unpkg.com/leaflet.fullscreen@1.6.0/Control.FullScreen.js"></script>
 <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
 
-{# --- Code JS tùy chỉnh --- #}
+{# --- Code JS tùy chỉnh Map (từ file ngoài) --- #}
 <script type="module" src="{% static 'js/map/main.js' %}"></script>
 
+{# --- TOÀN BỘ JAVASCRIPT TÙY CHỈNH CHO PANEL & CHATBOX NẰM TRONG THẺ NÀY --- #}
 <script>
-  // --- Hàm Tính Lãi Suất (Đã sửa phần đọc input) ---
+  // --- Các hàm xử lý dữ liệu & tiện ích (Phạm vi toàn cục) ---
   function calculateInterest() {
     const principalInput = document.getElementById("principal");
     const termSelector = document.getElementById("term-calculator");
@@ -435,30 +548,25 @@ JS --- #}
     const interestRateTableBody = document.getElementById(
       "interest-rate-table-body"
     );
-
-    // Lấy giá trị và loại bỏ dấu chấm định dạng
-    const rawValue = principalInput.value.replace(/\./g, ""); // Bỏ dấu chấm
-    const principal = parseFloat(rawValue); // Parse số
-
+    if (
+      !principalInput ||
+      !termSelector ||
+      !calculatedInterestDiv ||
+      !interestRateTableBody
+    ) {
+      console.error("Interest calculator elements not found.");
+      return;
+    }
+    const rawValue = principalInput.value.replace(/\./g, "");
+    const principal = parseFloat(rawValue);
     const selectedTerm = termSelector.value;
     let interestRate = 0;
-
-    calculatedInterestDiv.textContent = ""; // Clear previous result
-
-    // Kiểm tra principal sau khi đã parse
+    calculatedInterestDiv.textContent = "";
     if (!principal || isNaN(principal) || principal <= 0) {
       calculatedInterestDiv.textContent = "Vui lòng nhập số tiền gửi hợp lệ.";
       calculatedInterestDiv.style.color = "red";
       return;
     }
-
-    if (!interestRateTableBody) {
-      calculatedInterestDiv.textContent = "Lỗi: Không tìm thấy bảng lãi suất.";
-      calculatedInterestDiv.style.color = "red";
-      return;
-    }
-
-    // ... (Phần còn lại của hàm calculateInterest giữ nguyên) ...
     let foundRate = false;
     for (let i = 0; i < interestRateTableBody.rows.length; i++) {
       const row = interestRateTableBody.rows[i];
@@ -504,8 +612,6 @@ JS --- #}
     }
     calculatedInterestDiv.style.color = "green";
   }
-
-  // --- Các Hàm Hỗ Trợ Chuyển Đổi Tiền Tệ (Đơn giản hóa LẦN 2) ---
   function getExchangeRatesSimple() {
     const rates = {};
     const tableBody = document.getElementById(
@@ -529,7 +635,6 @@ JS --- #}
     }
     return rates;
   }
-
   function populateForeignCurrencyOptions() {
     const rates = getExchangeRatesSimple();
     const fromSelect = document.getElementById("convert-from-currency");
@@ -550,8 +655,6 @@ JS --- #}
       fromSelect.value = "USD";
     }
   }
-
-  // --- Hàm Chuyển Đổi Tiền Tệ Chính (Chỉ đổi sang VND, dùng Mua TM) ---
   function convertCurrencyToVND() {
     const amountInput = document.getElementById("convert-amount");
     const fromSelect = document.getElementById("convert-from-currency");
@@ -559,23 +662,19 @@ JS --- #}
     const resultAmountInput = document.getElementById(
       "conversion-result-amount"
     );
-
-    // Đổi type='number' sang 'text' để tránh xung đột định dạng
+    if (!amountInput || !fromSelect || !resultDiv || !resultAmountInput) {
+      console.error("Currency converter elements missing");
+      return;
+    }
     if (amountInput.type === "number") {
       amountInput.type = "text";
-      amountInput.inputMode = "numeric"; // Gợi ý bàn phím số
+      amountInput.inputMode = "numeric";
     }
-
-    // Lấy giá trị và xóa định dạng (dấu chấm) để parse
     const rawAmountValue = amountInput.value.replace(/\./g, "");
     const amount = parseFloat(rawAmountValue);
-
     const fromCurrency = fromSelect.value;
-
     resultDiv.textContent = "";
     resultAmountInput.placeholder = "Kết quả (VND)";
-
-    // Xóa kết quả nếu input trống hoặc không hợp lệ
     if (!amountInput.value.trim() || isNaN(amount) || amount <= 0) {
       resultAmountInput.value = "";
       resultAmountInput.placeholder =
@@ -583,23 +682,19 @@ JS --- #}
           ? "Nhập số > 0"
           : "Kết quả (VND)";
       if (amountInput.value.trim() && (isNaN(amount) || amount <= 0)) {
-        // Chỉ hiển thị lỗi nếu có nhập liệu nhưng không hợp lệ
         resultAmountInput.placeholder =
           amount <= 0 ? "Nhập số > 0" : "Số tiền không hợp lệ";
       } else {
-        resultDiv.textContent = ""; // Xóa tỷ giá nếu input trống
+        resultDiv.textContent = "";
       }
       return;
     }
-
     if (!fromCurrency) {
       resultAmountInput.value = "";
       resultAmountInput.placeholder = "Chọn ngoại tệ";
       return;
     }
-
     const rates = getExchangeRatesSimple();
-
     if (!rates[fromCurrency]) {
       resultAmountInput.value = "";
       resultAmountInput.placeholder = "Lỗi tỷ giá";
@@ -607,11 +702,9 @@ JS --- #}
       resultDiv.style.color = "red";
       return;
     }
-
     let result = 0;
-    let rateUsed = rates[fromCurrency].buyCash; // Luôn dùng Mua Tiền Mặt
+    let rateUsed = rates[fromCurrency].buyCash;
     let rateDescription = `tỷ giá mua TM ${fromCurrency}`;
-
     if (rateUsed <= 0) {
       resultAmountInput.value = "";
       resultAmountInput.placeholder = "Lỗi tỷ giá";
@@ -619,21 +712,37 @@ JS --- #}
       resultDiv.style.color = "red";
       return;
     }
-
     result = amount * rateUsed;
     resultAmountInput.value = result.toLocaleString("vi-VN", {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     });
-
     resultDiv.textContent = `Áp dụng ${rateDescription}: ${rateUsed.toLocaleString(
       "vi-VN"
     )}`;
     resultDiv.style.color = "green";
   }
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+      const cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === name + "=") {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
 
-  // --- Xử lý Panel Toggles và Sự kiện ---
+  // --- DOMContentLoaded Listener ---
   document.addEventListener("DOMContentLoaded", () => {
+    console.log("DEBUG: DOM fully loaded and parsed");
+
+    // --- Panel Logic ---
+    console.log("DEBUG: --- Setting up Panel Logic ---");
     const interestPanelToggle = document.getElementById(
       "interest-panel-toggle"
     );
@@ -642,43 +751,94 @@ JS --- #}
       "exchange-panel-toggle"
     );
     const exchangePanel = document.getElementById("exchange-panel");
-    const amountInput = document.getElementById("convert-amount"); // Tỷ giá
-    const fromSelect = document.getElementById("convert-from-currency"); // Tỷ giá
-    const principalInput = document.getElementById("principal"); // Lãi suất
+    const principalInput = document.getElementById("principal");
+    const amountInput = document.getElementById("convert-amount");
+    const fromSelect = document.getElementById("convert-from-currency");
 
-    // --- Panel Toggle Logic (Giữ nguyên) ---
+    console.log("DEBUG: Interest Toggle Element:", interestPanelToggle);
+    console.log("DEBUG: Interest Panel Element:", interestPanel);
+    console.log("DEBUG: Exchange Toggle Element:", exchangePanelToggle);
+    console.log("DEBUG: Exchange Panel Element:", exchangePanel);
+
+    // Critical check: Stop if panel toggles are not found
+    if (!interestPanelToggle || !exchangePanelToggle) {
+      console.error(
+        "DEBUG: CRITICAL - Cannot find interest or exchange toggle buttons! Aborting panel setup."
+      );
+      // If chat setup is below, it might still run unless we return here.
+      // For now, let's log the error and continue to see if chat setup works.
+    }
+    if (!interestPanel || !exchangePanel) {
+      console.error(
+        "DEBUG: CRITICAL - Cannot find interest or exchange panel elements! Aborting panel setup."
+      );
+    }
+
+    // Define setupPanelToggle Function
     function setupPanelToggle(toggleButton, panelToToggle, otherPanel) {
+      console.log(
+        "DEBUG: Attempting to setup toggle for:",
+        toggleButton ? toggleButton.id : "NULL Button",
+        panelToToggle ? panelToToggle.id : "NULL Panel"
+      );
+      // Check again inside function for safety
       if (toggleButton && panelToToggle) {
         toggleButton.addEventListener("click", (event) => {
+          console.log("DEBUG: >>>> CLICKED ON:", toggleButton.id);
           event.stopPropagation();
           const isOpening = !panelToToggle.classList.contains("open");
           if (otherPanel && otherPanel.classList.contains("open")) {
+            console.log("DEBUG: Closing other panel:", otherPanel.id);
             otherPanel.classList.remove("open");
             otherPanel.classList.add("closed");
           }
           if (isOpening) {
+            console.log("DEBUG: Opening panel:", panelToToggle.id);
             panelToToggle.classList.add("open");
             panelToToggle.classList.remove("closed");
             if (panelToToggle.id === "exchange-panel") {
               convertCurrencyToVND();
             }
-            // Không cần gọi calculateInterest() khi mở panel lãi suất
           } else {
+            console.log("DEBUG: Closing panel:", panelToToggle.id);
             panelToToggle.classList.remove("open");
             panelToToggle.classList.add("closed");
           }
         });
+        console.log(
+          `DEBUG: Successfully added click listener to ${toggleButton.id}`
+        );
       } else {
+        // Log the error specifically for which setup failed
         console.error(
-          "Toggle button or panel not found for:",
-          panelToToggle ? panelToToggle.id : "unknown"
+          `DEBUG: Cannot add listener for ${
+            toggleButton ? toggleButton.id : "unknown toggle"
+          } because Toggle button or panel was null.`
         );
       }
     }
-    setupPanelToggle(interestPanelToggle, interestPanel, exchangePanel);
-    setupPanelToggle(exchangePanelToggle, exchangePanel, interestPanel);
 
-    // --- Đóng panel khi click bên ngoài (Giữ nguyên) ---
+    // Call setupPanelToggle only if elements exist
+    console.log("DEBUG: --- Calling setupPanelToggle for Interest ---");
+    if (interestPanelToggle && interestPanel) {
+      setupPanelToggle(interestPanelToggle, interestPanel, exchangePanel);
+    } else {
+      console.error(
+        "DEBUG: Skipped setup for Interest Panel due to missing elements."
+      );
+    }
+
+    console.log("DEBUG: --- Calling setupPanelToggle for Exchange ---");
+    if (exchangePanelToggle && exchangePanel) {
+      setupPanelToggle(exchangePanelToggle, exchangePanel, interestPanel);
+    } else {
+      console.error(
+        "DEBUG: Skipped setup for Exchange Panel due to missing elements."
+      );
+    }
+    console.log("DEBUG: --- Finished calling setupPanelToggle ---");
+
+    // Close panel on outside click (Should be safe)
     document.addEventListener("click", (event) => {
       const clickIsOutsideInterest =
         interestPanel &&
@@ -702,83 +862,194 @@ JS --- #}
       }
     });
 
-    // --- Tự động định dạng ô nhập tiền LÃI SUẤT ---
+    // Input Formatting & Currency Setup (Check elements exist)
     if (principalInput) {
       principalInput.addEventListener("input", (event) => {
         let value = event.target.value;
-        let cursorPosition = event.target.selectionStart; // Lưu vị trí con trỏ
+        let cursorPosition = event.target.selectionStart;
         let originalLength = value.length;
-
-        // 1. Chỉ giữ lại số
         let rawValue = value.replace(/[^0-9]/g, "");
-
-        // 2. Chuyển thành số (hoặc 0 nếu rỗng)
         const numberValue = parseInt(rawValue, 10) || 0;
-
-        // 3. Định dạng lại với dấu chấm
         let formattedValue = numberValue.toLocaleString("vi-VN");
-
-        // Xử lý trường hợp người dùng xóa hết số
         if (rawValue === "") {
           formattedValue = "";
         }
-
-        // 4. Cập nhật lại giá trị ô input
         event.target.value = formattedValue;
-
-        // 5. Điều chỉnh lại vị trí con trỏ sau khi định dạng
         let newLength = formattedValue.length;
         let lengthDiff = newLength - originalLength;
-        // Ước tính vị trí mới, có thể chưa hoàn hảo trong mọi trường hợp
         let newCursorPosition = Math.max(0, cursorPosition + lengthDiff);
-        // Cố gắng đặt lại vị trí con trỏ
         try {
           event.target.setSelectionRange(newCursorPosition, newCursorPosition);
-        } catch (e) {
-          // Một số trình duyệt có thể lỗi nếu input không focus, bỏ qua lỗi này
-        }
+        } catch (e) {}
       });
-      // Không cần listener focus/blur nữa vì định dạng liên tục khi input
+    } else {
+      console.error("DEBUG: principalInput not found for formatting.");
     }
-
-    // --- Tự động định dạng ô nhập tiền TỶ GIÁ ---
     if (amountInput) {
       amountInput.addEventListener("input", (event) => {
         let value = event.target.value;
         let cursorPosition = event.target.selectionStart;
         let originalLength = value.length;
-
         let rawValue = value.replace(/[^0-9]/g, "");
         const numberValue = parseInt(rawValue, 10) || 0;
         let formattedValue = numberValue.toLocaleString("vi-VN");
-
         if (rawValue === "") {
           formattedValue = "";
         }
-
         event.target.value = formattedValue;
-
         let newLength = formattedValue.length;
         let lengthDiff = newLength - originalLength;
         let newCursorPosition = Math.max(0, cursorPosition + lengthDiff);
-
         try {
           event.target.setSelectionRange(newCursorPosition, newCursorPosition);
         } catch (e) {}
-
-        // Gọi hàm tính toán sau khi định dạng
         convertCurrencyToVND();
       });
+    } else {
+      console.error("DEBUG: amountInput not found for formatting.");
+    }
+    if (fromSelect) {
+      fromSelect.addEventListener("change", convertCurrencyToVND);
+    } else {
+      console.error("DEBUG: fromSelect not found for change listener.");
     }
 
-    // --- Tự động tính lại KHI THAY ĐỔI SELECT TỶ GIÁ ---
-    if (fromSelect) fromSelect.addEventListener("change", convertCurrencyToVND);
+    // Initial calls (Check elements exist)
+    if (document.getElementById("convert-from-currency")) {
+      console.log("DEBUG: Populating currency options...");
+      populateForeignCurrencyOptions();
+    }
+    if (document.getElementById("convert-amount")) {
+      console.log("DEBUG: Initial currency conversion...");
+      convertCurrencyToVND();
+    }
 
-    // --- Populate currency options on load ---
-    populateForeignCurrencyOptions();
-    // Initial calculation on load (sẽ hiển thị placeholder vì input trống)
-    convertCurrencyToVND();
-  });
+    console.log("DEBUG: --- Panel Logic Setup Finished ---");
+
+    // --- Chatbox Logic ---
+    console.log("DEBUG: --- Setting up Chatbox Logic ---");
+    const openChatBtn = document.getElementById("open-chat-btn");
+    const closeChatBtn = document.getElementById("close-chat-btn");
+    const chatWindow = document.getElementById("chat-window");
+    const chatMessages = document.getElementById("chat-messages");
+    const chatInput = document.getElementById("chat-input");
+    const sendChatBtn = document.getElementById("send-chat-btn");
+
+    console.log("DEBUG: Chat button element:", openChatBtn);
+
+    if (
+      !openChatBtn ||
+      !chatWindow ||
+      !closeChatBtn ||
+      !chatMessages ||
+      !chatInput ||
+      !sendChatBtn
+    ) {
+      console.error(
+        "DEBUG: One or more chatbox elements not found! Check IDs."
+      );
+    } else {
+      // Only add listeners if all elements are found
+      const csrftoken = getCookie("csrftoken");
+
+      if (openChatBtn) {
+        openChatBtn.addEventListener("click", () => {
+          if (chatWindow) {
+            chatWindow.classList.remove("closed");
+            chatWindow.classList.add("open");
+            console.log("DEBUG: Chat window opened.");
+          }
+        });
+      }
+      if (closeChatBtn) {
+        closeChatBtn.addEventListener("click", () => {
+          if (chatWindow) {
+            chatWindow.classList.remove("open");
+            chatWindow.classList.add("closed");
+            console.log("DEBUG: Chat window closed.");
+          }
+        });
+      }
+
+      function addMessageToChat(message, sender) {
+        if (!chatMessages) {
+          console.error(
+            "DEBUG: chatMessages element not found in addMessageToChat"
+          );
+          return;
+        }
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add(
+          "message",
+          sender === "user" ? "user-message" : "bot-message"
+        );
+        messageDiv.textContent = message;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+      async function sendMessage() {
+        if (!chatInput) {
+          console.error("DEBUG: chatInput not found in sendMessage");
+          return;
+        }
+        const userMessage = chatInput.value.trim();
+        if (!userMessage) return;
+        addMessageToChat(userMessage, "user");
+        chatInput.value = "";
+        console.log(`DEBUG: Sending message: ${userMessage}`);
+        try {
+          const response = await fetch("/maps/chat/message/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": csrftoken,
+            },
+            body: JSON.stringify({ message: userMessage }),
+          });
+          if (!response.ok) {
+            console.error(
+              "DEBUG: Chat API error status:",
+              response.status,
+              response.statusText
+            );
+            const errorData = await response
+              .json()
+              .catch(() => ({
+                error: "Không thể phân tích phản hồi lỗi từ server.",
+              }));
+            addMessageToChat(
+              errorData.error ||
+                `Lỗi ${response.status}: Không thể kết nối đến chatbot.`,
+              "bot"
+            );
+            return;
+          }
+          const data = await response.json();
+          console.log("DEBUG: Received reply:", data.reply);
+          addMessageToChat(data.reply || "Xin lỗi, có lỗi xảy ra.", "bot");
+        } catch (error) {
+          console.error("DEBUG: Fetch error:", error);
+          addMessageToChat(
+            "Lỗi kết nối mạng khi gửi tin nhắn. Vui lòng thử lại.",
+            "bot"
+          );
+        }
+      }
+      if (sendChatBtn) {
+        sendChatBtn.addEventListener("click", sendMessage);
+      }
+      if (chatInput) {
+        chatInput.addEventListener("keypress", (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            sendMessage();
+          }
+        });
+      }
+    } // End of check for chatbox elements
+
+    console.log("DEBUG: --- Chatbox Logic Setup Finished ---");
+    console.log("DEBUG: --- DOMContentLoaded processing fully finished ---");
+  }); // Kết thúc DOMContentLoaded
 </script>
-
 {% endblock %}
