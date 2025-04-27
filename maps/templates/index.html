@@ -1011,11 +1011,9 @@ giá & Lãi suất {% endblock %} {% block map %} {# --- Các Link CSS --- #}
               response.status,
               response.statusText
             );
-            const errorData = await response
-              .json()
-              .catch(() => ({
-                error: "Không thể phân tích phản hồi lỗi từ server.",
-              }));
+            const errorData = await response.json().catch(() => ({
+              error: "Không thể phân tích phản hồi lỗi từ server.",
+            }));
             addMessageToChat(
               errorData.error ||
                 `Lỗi ${response.status}: Không thể kết nối đến chatbot.`,

@@ -651,3 +651,84 @@ input[type='checkbox']:checked {
 #interest-calculator input#principal {
     text-align: right; /* Căn phải số tiền */
 }
+/* chatbox */
+
+
+.custom-routing-panel .custom-route-instructions-title {
+     margin-top: 0;
+     margin-bottom: 10px;
+     font-size: 1.05em;
+     color: #333;
+     border-top: 1px solid #eee; /* Phân cách nhẹ */
+     padding-top: 15px;
+}
+
+.custom-routing-panel .custom-route-instructions-list {
+    list-style: none; /* Bỏ dấu chấm mặc định của ol/ul */
+    padding-left: 0;
+    margin-top: 0;
+    counter-reset: instruction-counter; /* Tạo bộ đếm */
+}
+
+.custom-routing-panel .custom-route-instruction-item {
+    padding: 10px 0 10px 30px; /* Tạo khoảng trống cho số thứ tự */
+    border-bottom: 1px dotted #eee;
+    display: flex; /* Cho phép text và distance nằm trên cùng hàng */
+    justify-content: space-between; /* Đẩy distance sang phải */
+    align-items: flex-start; /* Căn trên nếu text dài */
+    position: relative; /* Để định vị số thứ tự */
+    font-size: 0.9em;
+}
+.custom-routing-panel .custom-route-instruction-item::before {
+     counter-increment: instruction-counter; /* Tăng bộ đếm */
+     content: counter(instruction-counter); /* Hiển thị số */
+     position: absolute;
+     left: 0;
+     top: 10px; /* Điều chỉnh vị trí dọc */
+     background-color: #007bff; /* Màu nền số */
+     color: white;
+     font-weight: bold;
+     width: 20px;
+     height: 20px;
+     line-height: 20px;
+     text-align: center;
+     border-radius: 50%; /* Bo tròn */
+     font-size: 0.8em;
+}
+
+
+.custom-routing-panel .custom-route-instruction-item:last-child {
+    border-bottom: none;
+}
+
+.custom-routing-panel .instruction-text {
+    flex-grow: 1; /* Cho phép text chiếm phần lớn không gian */
+    padding-right: 15px; /* Khoảng cách giữa text và distance */
+    line-height: 1.4;
+}
+
+.custom-routing-panel .instruction-distance {
+    font-weight: bold;
+    white-space: nowrap; /* Không xuống dòng */
+    color: #333;
+    padding-left: 10px; /* Thêm khoảng cách trái cho distance */
+    align-self: center; /* Căn giữa distance theo chiều dọc */
+}
+
+/* Style cho nút đóng tùy chỉnh */
+#close-custom-route-panel {
+    background-color: #6c757d; /* Màu xám */
+    border: none;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+#close-custom-route-panel:hover {
+     background-color: #5a6268; /* Màu xám đậm hơn */
+}
+.custom-routing-panel .custom-route-instruction-item.selected-instruction { background-color: #e7f3ff; font-weight: bold; }
+.custom-routing-panel .custom-route-instruction-item { transition: background-color 0.2s ease; }
